@@ -4,9 +4,8 @@
 
 Powered by a **Streamlit frontend**, a **FastAPI backend**, and **Google Gemini Pro**, Foodie-App delivers delightful and intelligent food conversations — including image-based queries, menu browsing, table booking, and order placement.
 
----
-
-
+<br>
+<br>
 
 ### 🚀 Deployment for Use
 You can use Foodie Web App in two ways: locally or via the deployed links.
@@ -20,47 +19,41 @@ You can use Foodie Web App in two ways: locally or via the deployed links.
 - **Frontend (Chat UI):** [https://foodie-app.streamlit.app](https://foodie-app.streamlit.app)  
 - **Backend API:** [https://foodie-backend-mq80.onrender.com](https://foodie-backend-mq80.onrender.com)
 
->> **Instructions:**  
->> First, click the **Backend API** link to wake up the Render server (it may take a few seconds).  
->> Once it's running, click the **Frontend UI** link to launch the app and start chatting.
+> **Instructions:**  
+> First, click the **Backend API** link to wake up the Render server (it may take a few seconds).  
+> Once it's running, click the **Frontend UI** link to launch the app and start chatting.
 
 <br>
 
 #### ⚙️ Option 2: Run Locally on Your Machine
 
-```md
 **1. Clone the Repo**
-
-    ```bash
+ ```bash
     git clone https://github.com/Ola-doyin/Foodie-App.git
     cd Foodie-App
-    ```
+ ```
 
 **2. Run the backend**
-
-    ```bash
+ ```bash
     cd foodie-backend
     pip install -r requirements.txt
     uvicorn components.backend:app --reload
-    ```
+ ```
 
 **3. Run the frontend**
-
-    ```bash
+```bash
     cd foodie-frontend
     pip install -r requirements.txt
     streamlit run frontend.py
-    ```
 ```
 
-**Make sure to add your Gemini API key in a .env.txt file in the foodie-frontend folder like this:**
+⚠️ **Make sure to add your Gemini API key in a .env.txt file in the foodie-frontend folder like this:**
 ```bash
-GEMINI_API_KEY=your_google_gemini_api_key_here
+    GEMINI_API_KEY=your_google_gemini_api_key_here
 ```
 
 <br>
-
-
+<br>
 
 ### ⚙️ Features
 
@@ -73,9 +66,8 @@ GEMINI_API_KEY=your_google_gemini_api_key_here
 - 📍 View all branches and their current specials
 - 💬 Interactive chat bubbles with avatars
 
----
-
-
+<br>
+<br>
 
 ### 🏗️ Project Structure
 ```md
@@ -97,9 +89,8 @@ Foodie-App/
 │ └── requirements.txt # Backend dependencies
 ```
 
----
-
-
+<br>
+<br>
 
 ### 🔧 Tech Stack
 
@@ -112,9 +103,8 @@ Foodie-App/
 | Styling   | Pure CSS injected via Python  |
 | Data Store| JSON (simulated DB)           |
 
----
-
-
+<br>
+<br>
 
 ### 💬 Sample Prompts Examples
 
@@ -123,10 +113,11 @@ Foodie-App/
 - “How much is Jollof Rice and Chicken Wings”
 - “How much do I have in my wallet?”
 - “What was my last order?”
-
----
-
-
+- “You sabi semo abi?”
+- “Ki ni mo le je?”
+  
+<br>
+<br>
 
 ### 📄 License
 MIT License © Oladoyin Arewa
@@ -135,10 +126,11 @@ Creator: Oladoyin Arewa
 
 👩‍🔬 Electrical Engineer | 🧠 AI/ML Enthusiast | 🌞 Solar Microgrid Researcher
 
-GitHub: @Ola-doyin
+GitHub: [@Ola-doyin](https://github.com/Ola-doyin)  
 
----
+<br>
+<br>
 
 
 ### 💖 Built with love by Oladoyin
-Have fun ordering from us!!
+Have fun with the foodie chatbot!!!
