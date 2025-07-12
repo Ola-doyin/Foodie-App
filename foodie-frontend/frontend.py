@@ -3,8 +3,9 @@ import os
 from components.style import *
 from components.prompt import *
 import requests
-import time
-import socket
+import base64
+import PIL.Image
+from google.genai.types import Part
 import sys
 sys.dont_write_bytecode = True
 
@@ -101,8 +102,8 @@ prompt = st.chat_input(
 # === Handle input ===
 if prompt:
     # Handle text input
-    if prompt.text:
-        st.session_state.messages.append({"role": "user", "content": prompt.text})
+    if prompt.text and not prompt.files:
+        st.session_state.messages.append({"role": "user", "content": prompt.text.strip().replace("\n", "<br>")})
 
         response_text = generate_content(
             prompt_parts=build_prompt(
@@ -117,45 +118,40 @@ if prompt:
 
         st.session_state.messages.append({"role": "bot", "content": response_text})
 
-    # Handle file uploads
     elif prompt.files:
         if "uploaded_images" not in st.session_state:
             st.session_state.uploaded_images = []
 
-        for uploaded_file in prompt.files:
-            st.session_state.uploaded_images.append(uploaded_file)
-            st.session_state.messages.append({
-                "role": "user",
-                "content": f"📷 Image uploaded: {uploaded_file.name}"
-            })
-
-    elif prompt.files:
-        if "uploaded_images" not in st.session_state:
-            st.session_state.uploaded_images = []
-
-        # Just get the first image for now (Gemini typically supports one at a time)
         image_file = prompt.files[0]
         st.session_state.uploaded_images.append(image_file)
 
         st.session_state.messages.append({
             "role": "user",
-            "content": f"📷 Image uploaded: {image_file.name}" + (f"\n{prompt.text}" if prompt.text else "")
+            "content": f"📷 Image uploaded: {image_file.name}<br>" + (f"{prompt.text.strip().replace('\n', '<br>')}" if prompt.text else "")
         })
 
-        # Send to Gemini if text exists with the image
-        if prompt.text:
-            response_text = generate_content(
-                image=image_file,
-                prompt_parts=build_prompt(
-                    user_text=prompt.text,
-                    name=st.session_state.get("name_input", None),
-                    image_count=1,
-                    language=st.session_state.get("language_choice", "English"),
-                    chat_history=st.session_state.messages
-                ),
-                language=st.session_state.get("language_choice", "English")
-            )
+        # Read image bytes once
+        image_bytes = image_file.read()
+        image_part = Part.from_bytes(data=image_bytes, mime_type=image_file.type)
+        user_text = build_prompt(
+                user_text=prompt.text.strip() if prompt.text else "What food is this?",
+                name=st.session_state.get("name_input", None),
+                image_count=1,
+                language=st.session_state.get("language_choice", "English"),
+                chat_history=st.session_state.messages
+        )
+        
+        # Compose contents list for Gemini: text + image Part
+        prompt_parts = [
+            user_text,
+            image_part,
+        ]
 
-            st.session_state.messages.append({"role": "bot", "content": response_text})
+        response_text = generate_content(
+            prompt_parts=prompt_parts,
+            language=st.session_state.get("language_choice", "English")
+        )
+
+        st.session_state.messages.append({"role": "bot", "content": response_text})
 
     st.rerun()
