@@ -5,14 +5,13 @@
 Powered by a **Streamlit frontend**, a **FastAPI backend**, and **Google Gemini Pro**, Foodie-App delivers delightful and intelligent food conversations — including image-based queries, menu browsing, table booking, and order placement.
 
 <br>
-<br>
 
-### 🚀 Deployment for Use
+## 🚀 Deployment for Use
 You can use Foodie Web App in two ways: locally or via the deployed links.
 
 > ⚠️ **Note:** The user interface is optimized for **desktop/laptop view only** and may not render properly on mobile devices.
 
-<br>
+<div style="margin-top: 6px;"></div>
 
 #### 🟢 Option 1: Use Deployed Versions (No Setup Needed)
 
@@ -23,24 +22,24 @@ You can use Foodie Web App in two ways: locally or via the deployed links.
 > First, click the **Backend API** link to wake up the Render server (it may take a few seconds).  
 > Once it's running, click the **Frontend UI** link to launch the app and start chatting.
 
-<br>
+<div style="margin-top: 6px;"></div>
 
 #### ⚙️ Option 2: Run Locally on Your Machine
 
-**1. Clone the Repo**
+ **1. Clone the Repo**
  ```bash
     git clone https://github.com/Ola-doyin/Foodie-App.git
     cd Foodie-App
  ```
 
-**2. Run the backend**
+ **2. Run the backend**
  ```bash
     cd foodie-backend
     pip install -r requirements.txt
     uvicorn components.backend:app --reload
  ```
 
-**3. Run the frontend**
+ **3. Run the frontend**
 ```bash
     cd foodie-frontend
     pip install -r requirements.txt
@@ -55,7 +54,7 @@ You can use Foodie Web App in two ways: locally or via the deployed links.
 <br>
 <br>
 
-### ⚙️ Features
+## ⚙️ Features
 
 - 🌐 Multilingual: Supports English, Yoruba, Hausa, Igbo, and Pidgin
 - 🧠 Gemini-powered: ChatGPT-style natural responses
@@ -69,7 +68,7 @@ You can use Foodie Web App in two ways: locally or via the deployed links.
 <br>
 <br>
 
-### 🏗️ Project Structure
+## 🏗️ Project Structure
 ```md
 Foodie-App/
 ├── foodie-frontend/ # Streamlit app
@@ -92,7 +91,7 @@ Foodie-App/
 <br>
 <br>
 
-### 🔧 Tech Stack
+## 🔧 Tech Stack
 
 | Layer     | Technology                    |
 |-----------|-------------------------------|
@@ -106,7 +105,7 @@ Foodie-App/
 <br>
 <br>
 
-### 💬 Sample Prompts Examples
+## 💬 Sample Prompts Examples
 
 - “Show me all soups on the menu”
 - “Book a VIP table in Ikeja”
@@ -119,7 +118,7 @@ Foodie-App/
 <br>
 <br>
 
-### 📄 License
+## 📄 License
 MIT License © Oladoyin Arewa
 
 Creator: Oladoyin Arewa
