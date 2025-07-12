@@ -13,46 +13,52 @@ You can use Foodie Web App in two ways: locally or via the deployed links.
 
 > ⚠️ **Note:** The user interface is optimized for **desktop/laptop view only** and may not render properly on mobile devices.
 
+<br>
 
 #### 🟢 Option 1: Use Deployed Versions (No Setup Needed)
 
 - **Frontend (Chat UI):** [https://foodie-app.streamlit.app](https://foodie-app.streamlit.app)  
 - **Backend API:** [https://foodie-backend-mq80.onrender.com](https://foodie-backend-mq80.onrender.com)
 
-> **Instructions:**  
-> First, click the **Backend API** link to wake up the Render server (it may take a few seconds).  
-> Once it's running, click the **Frontend UI** link to launch the app and start chatting.
+>> **Instructions:**  
+>> First, click the **Backend API** link to wake up the Render server (it may take a few seconds).  
+>> Once it's running, click the **Frontend UI** link to launch the app and start chatting.
 
-
+<br>
 
 #### ⚙️ Option 2: Run Locally on Your Machine
 
-1. **Clone the Repository**
-```bash
-git clone https://github.com/Ola-doyin/Foodie-App.git
-cd Foodie-App
-```
+```md
+**1. Clone the Repo**
 
-2. **Set Up the Backend (FastAPI)**
-```bash
-cd foodie-backend
-pip install -r requirements.txt
-uvicorn components.backend:app --reload
-```
-This will start the FastAPI backend on: http://127.0.0.1:8000
+    ```bash
+    git clone https://github.com/Ola-doyin/Foodie-App.git
+    cd Foodie-App
+    ```
 
-3. **Set Up the Frontend (Streamlit)**
-```bash
-cd foodie-frontend
-pip install -r requirements.txt
-streamlit run frontend.py
+**2. Run the backend**
+
+    ```bash
+    cd foodie-backend
+    pip install -r requirements.txt
+    uvicorn components.backend:app --reload
+    ```
+
+**3. Run the frontend**
+
+    ```bash
+    cd foodie-frontend
+    pip install -r requirements.txt
+    streamlit run frontend.py
+    ```
 ```
 
 **Make sure to add your Gemini API key in a .env.txt file in the foodie-frontend folder like this:**
 ```bash
 GEMINI_API_KEY=your_google_gemini_api_key_here
 ```
----
+
+<br>
 
 
 
@@ -72,7 +78,7 @@ GEMINI_API_KEY=your_google_gemini_api_key_here
 
 
 ### 🏗️ Project Structure
-
+```md
 Foodie-App/
 ├── foodie-frontend/ # Streamlit app
 │ ├── assets/ # Images, logo, background
@@ -89,7 +95,7 @@ Foodie-App/
 │ ├── menu.json # Runtime menu
 │ ├── branches.json # Runtime branch info
 │ └── requirements.txt # Backend dependencies
-
+```
 
 ---
 
