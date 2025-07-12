@@ -4,14 +4,15 @@
 
 Powered by a **Streamlit frontend**, a **FastAPI backend**, and **Google Gemini Pro**, Foodie-App delivers delightful and intelligent food conversations — including image-based queries, menu browsing, table booking, and order placement.
 
+
 <br>
+
 
 ## 🚀 Deployment for Use
 You can use Foodie Web App in two ways: locally or via the deployed links.
+⚠️ **Note:** The user interface is optimized for **desktop/laptop view only** and may not render properly on mobile devices.
 
-> ⚠️ **Note:** The user interface is optimized for **desktop/laptop view only** and may not render properly on mobile devices.
-
-<div style="margin-top: 6px;"></div>
+<div style="margin-top: 12px;"></div>
 
 #### 🟢 Option 1: Use Deployed Versions (No Setup Needed)
 
@@ -22,37 +23,40 @@ You can use Foodie Web App in two ways: locally or via the deployed links.
 > First, click the **Backend API** link to wake up the Render server (it may take a few seconds).  
 > Once it's running, click the **Frontend UI** link to launch the app and start chatting.
 
-<div style="margin-top: 6px;"></div>
+<div style="margin-top: 12px;"></div>
 
 #### ⚙️ Option 2: Run Locally on Your Machine
 
- **1. Clone the Repo**
+**1. Clone the Repo**
  ```bash
     git clone https://github.com/Ola-doyin/Foodie-App.git
     cd Foodie-App
  ```
 
- **2. Run the backend**
+**2. Run the backend**
  ```bash
     cd foodie-backend
     pip install -r requirements.txt
     uvicorn components.backend:app --reload
  ```
 
- **3. Run the frontend**
+**3. Run the frontend**
 ```bash
     cd foodie-frontend
     pip install -r requirements.txt
     streamlit run frontend.py
 ```
 
+<div style="margin-top: 12px;"></div>
+
 ⚠️ **Make sure to add your Gemini API key in a .env.txt file in the foodie-frontend folder like this:**
 ```bash
     GEMINI_API_KEY=your_google_gemini_api_key_here
 ```
 
+
 <br>
-<br>
+
 
 ## ⚙️ Features
 
@@ -65,8 +69,9 @@ You can use Foodie Web App in two ways: locally or via the deployed links.
 - 📍 View all branches and their current specials
 - 💬 Interactive chat bubbles with avatars
 
+
 <br>
-<br>
+
 
 ## 🏗️ Project Structure
 ```md
@@ -88,8 +93,9 @@ Foodie-App/
 │ └── requirements.txt # Backend dependencies
 ```
 
+
 <br>
-<br>
+
 
 ## 🔧 Tech Stack
 
@@ -102,8 +108,9 @@ Foodie-App/
 | Styling   | Pure CSS injected via Python  |
 | Data Store| JSON (simulated DB)           |
 
+
 <br>
-<br>
+
 
 ## 💬 Sample Prompts Examples
 
@@ -115,8 +122,9 @@ Foodie-App/
 - “You sabi semo abi?”
 - “Ki ni mo le je?”
   
+
 <br>
-<br>
+
 
 ## 📄 License
 MIT License © Oladoyin Arewa
