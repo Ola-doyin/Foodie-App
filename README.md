@@ -6,8 +6,12 @@ Powered by a **Streamlit frontend**, a **FastAPI backend**, and **Google Gemini 
 
 ---
 
+
+
 ### 🚀 Deployment for Use
 You can use Foodie Web App in two ways: locally or via the deployed links.
+
+> ⚠️ **Note:** The user interface is optimized for **desktop/laptop view only** and may not render properly on mobile devices.
 
 
 #### 🟢 Option 1: Use Deployed Versions (No Setup Needed)
@@ -15,41 +19,42 @@ You can use Foodie Web App in two ways: locally or via the deployed links.
 - **Frontend (Chat UI):** [https://foodie-app.streamlit.app](https://foodie-app.streamlit.app)  
 - **Backend API:** [https://foodie-backend-mq80.onrender.com](https://foodie-backend-mq80.onrender.com)
 
-
 > **Instructions:**  
 > First, click the **Backend API** link to wake up the Render server (it may take a few seconds).  
 > Once it's running, click the **Frontend UI** link to launch the app and start chatting.
 
-───────────────────────────────────────────────
+
 
 #### ⚙️ Option 2: Run Locally on Your Machine
 
-##### 1. Clone the Repository
+1. **Clone the Repository**
 ```bash
 git clone https://github.com/Ola-doyin/Foodie-App.git
 cd Foodie-App
 ```
-##### 2. Set Up the Backend (FastAPI)
 
+2. **Set Up the Backend (FastAPI)**
+```bash
 cd foodie-backend
 pip install -r requirements.txt
 uvicorn components.backend:app --reload
-
+```
 This will start the FastAPI backend on: http://127.0.0.1:8000
 
-##### 3. Set Up the Frontend (Streamlit)
-
+3. **Set Up the Frontend (Streamlit)**
+```bash
 cd foodie-frontend
 pip install -r requirements.txt
 streamlit run frontend.py
+```
 
----
-
-Make sure to add your Gemini API key in a .env.txt file in the foodie-frontend folder like this:
-
+**Make sure to add your Gemini API key in a .env.txt file in the foodie-frontend folder like this:**
+```bash
 GEMINI_API_KEY=your_google_gemini_api_key_here
-
+```
 ---
+
+
 
 ### ⚙️ Features
 
@@ -63,6 +68,8 @@ GEMINI_API_KEY=your_google_gemini_api_key_here
 - 💬 Interactive chat bubbles with avatars
 
 ---
+
+
 
 ### 🏗️ Project Structure
 
@@ -86,6 +93,8 @@ Foodie-App/
 
 ---
 
+
+
 ### 🔧 Tech Stack
 
 | Layer     | Technology                    |
@@ -99,24 +108,31 @@ Foodie-App/
 
 ---
 
+
+
 ### 💬 Sample Prompts Examples
 
-- “Show me all available soups”
+- “Show me all soups on the menu”
 - “Book a VIP table in Ikeja”
-- “Place order for Jollof Rice and Chicken Wings”
-- “What are today’s specials at Yaba?”
+- “How much is Jollof Rice and Chicken Wings”
 - “How much do I have in my wallet?”
+- “What was my last order?”
 
 ---
+
+
 
 ### 📄 License
 MIT License © Oladoyin Arewa
 
 Creator: Oladoyin Arewa
+
 👩‍🔬 Electrical Engineer | 🧠 AI/ML Enthusiast | 🌞 Solar Microgrid Researcher
+
 GitHub: @Ola-doyin
 
 ---
+
 
 ### 💖 Built with love by Oladoyin
 Have fun ordering from us!!
