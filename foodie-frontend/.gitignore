@@ -1,0 +1,9 @@
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Secrets
+env.txt
+.env
+
+/.streamlit/secrets.toml

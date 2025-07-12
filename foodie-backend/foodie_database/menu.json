@@ -1,0 +1,304 @@
+{
+    "sides": [
+        {
+            "name": "Puff Puff",
+            "price": 400
+        },
+        {
+            "name": "Fried Yam",
+            "price": 400
+        },
+        {
+            "name": "Fried Potatoes",
+            "price": 400
+        },
+        {
+            "name": "Fruit Salad",
+            "price": 500
+        },
+        {
+            "name": "Akara",
+            "price": 500
+        },
+        {
+            "name": "Cooked Pap",
+            "price": 300
+        },
+        {
+            "name": "Peppered Ponmo",
+            "price": 250
+        },
+        {
+            "name": "Peppered Chicken",
+            "price": 850
+        },
+        {
+            "name": "Round Panla",
+            "price": 600
+        },
+        {
+            "name": "Shrimps",
+            "price": 1200
+        }
+    ],
+    "main_menu": [
+        {
+            "name": "Jollof Rice",
+            "price": 900
+        },
+        {
+            "name": "Village Rice",
+            "price": 1000
+        },
+        {
+            "name": "Ofada Rice/Sauce",
+            "price": 1700
+        },
+        {
+            "name": "Coconut Rice",
+            "price": 1200
+        },
+        {
+            "name": "White Rice",
+            "price": 800
+        },
+        {
+            "name": "Rice And Beans",
+            "price": 800
+        },
+        {
+            "name": "Special Fried Rice",
+            "price": 1200
+        },
+        {
+            "name": "Ewa Agoyin",
+            "price": 600
+        },
+        {
+            "name": "Beans Porridge",
+            "price": 500
+        },
+        {
+            "name": "Yam Porridge",
+            "price": 700
+        },
+        {
+            "name": "Boiled Yam",
+            "price": 500
+        },
+        {
+            "name": "Spaghetti Jollof",
+            "price": 700
+        },
+        {
+            "name": "Farm House Porridge",
+            "price": 800
+        }
+    ],
+    "soups": [
+        {
+            "name": "Egusi",
+            "price": 900
+        },
+        {
+            "name": "Efo Riro",
+            "price": 900
+        },
+        {
+            "name": "Edikaikong",
+            "price": 900
+        },
+        {
+            "name": "Afang",
+            "price": 900
+        },
+        {
+            "name": "Ogbono",
+            "price": 900
+        },
+        {
+            "name": "Ewedu",
+            "price": 100
+        },
+        {
+            "name": "Gbegiri",
+            "price": 100
+        },
+        {
+            "name": "Catfish Pepper Soup",
+            "price": 1000
+        },
+        {
+            "name": "Bitter Leaf Soup",
+            "price": 900
+        },
+        {
+            "name": "Seafood Okro",
+            "price": 3500
+        },
+        {
+            "name": "White Soup",
+            "price": 1500
+        },
+        {
+            "name": "Oha Soup",
+            "price": 900
+        }
+    ],
+    "proteins": [
+        {
+            "name": "Hake Fish",
+            "price": 1200
+        },
+        {
+            "name": "Titus",
+            "price": 1000
+        },
+        {
+            "name": "Turkey (Big)",
+            "price": 2000
+        },
+        {
+            "name": "Turkey (Small)",
+            "price": 1200
+        },
+        {
+            "name": "Chicken",
+            "price": 1700
+        },
+        {
+            "name": "Chicken (Small)",
+            "price": 850
+        },
+        {
+            "name": "Cow Leg",
+            "price": 1000
+        },
+        {
+            "name": "Goat Meat",
+            "price": 1500
+        },
+        {
+            "name": "Beef",
+            "price": 700
+        },
+        {
+            "name": "Assorted",
+            "price": 500
+        },
+        {
+            "name": "Ponmo",
+            "price": 500
+        },
+        {
+            "name": "Panla",
+            "price": 600
+        },
+        {
+            "name": "Boiled Egg",
+            "price": 250
+        },
+        {
+            "name": "Croaker Fish",
+            "price": 2000
+        },
+        {
+            "name": "Roasted Cat Fish",
+            "price": 2000
+        }
+    ],
+    "swallows": [
+        {
+            "name": "Amala",
+            "price": 500
+        },
+        {
+            "name": "Pounded Yam",
+            "price": 400
+        },
+        {
+            "name": "Semo",
+            "price": 300
+        },
+        {
+            "name": "Eba",
+            "price": 200
+        }
+    ],
+    "extras": [
+        {
+            "name": "Plantain",
+            "price": 500
+        },
+        {
+            "name": "Egg Sauce",
+            "price": 500
+        },
+        {
+            "name": "Moi Moi",
+            "price": 500
+        },
+        {
+            "name": "Fish Sauce",
+            "price": 1000
+        },
+        {
+            "name": "Boiled Plantain",
+            "price": 900
+        },
+        {
+            "name": "Gizz Dodo",
+            "price": 900
+        },
+        {
+            "name": "Ofada Sauce",
+            "price": 900
+        }
+    ],
+    "drinks": [
+        {
+            "name": "Palmwine",
+            "price": 700
+        },
+        {
+            "name": "Zobo Drink",
+            "price": 500
+        },
+        {
+            "name": "Chapman",
+            "price": 700
+        },
+        {
+            "name": "Soda",
+            "price": 400
+        },
+        {
+            "name": "Milk Shake",
+            "price": 800
+        },
+        {
+            "name": "Apple Juice",
+            "price": 700
+        },
+        {
+            "name": "Blackcurrant Juice",
+            "price": 600
+        },
+        {
+            "name": "Caprison",
+            "price": 300
+        },
+        {
+            "name": "Malt",
+            "price": 500
+        },
+        {
+            "name": "Water",
+            "price": 200
+        }
+    ],
+    "settings": {
+        "takeaway_pack_price": 500,
+        "vat_percentage": 7.5
+    }
+}

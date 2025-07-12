@@ -1,0 +1,7 @@
+[theme]
+base="light"  # or "dark"
+primaryColor="#FF4B4B"
+backgroundColor="#0E1117"
+secondaryBackgroundColor="#fff"
+textColor="#fff"
+font="sans serif"  # or "monospace", "serif"

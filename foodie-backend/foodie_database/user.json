@@ -1,0 +1,64 @@
+{
+    "customer_id": 5,
+    "wallet_balance": 35700.7,
+    "last_orders": [
+        {
+            "food": [
+                "Fried Rice",
+                "Moi Moi",
+                "Croaker Fish"
+            ],
+            "date": "2025-07-10",
+            "time": "14:00"
+        },
+        {
+            "food": [
+                "Semovita",
+                "Seafood Okro"
+            ],
+            "date": "2025-07-09",
+            "time": "15:40"
+        },
+        {
+            "food": [
+                "Akara",
+                "Cooked Pap"
+            ],
+            "date": "2025-07-08",
+            "time": "07:30"
+        },
+        {
+            "food": [
+                "Dodo Gizzard",
+                "Boiled Yam",
+                "Zobo Drink"
+            ],
+            "date": "2025-07-07",
+            "time": "12:10"
+        },
+        {
+            "food": [
+                "Palmwine"
+            ],
+            "date": "2025-07-06",
+            "time": "18:20"
+        },
+        {
+            "food": [
+                "Ogbono",
+                "Goat Meat",
+                "Water"
+            ],
+            "date": "2025-07-05",
+            "time": "14:50"
+        },
+        {
+            "food": [
+                "Catfish Pepper Soup",
+                "Pounded Yam"
+            ],
+            "date": "2025-07-04",
+            "time": "20:10"
+        }
+    ]
+}
