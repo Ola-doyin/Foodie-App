@@ -7,7 +7,7 @@ from google.genai.types import Part
 from components.foodie_tool import *
 import json
 import random
-
+import re
 
 # === Configure Client and Tools ===
 load_dotenv(os.path.join(os.path.dirname(__file__), "..", "env.txt"))
@@ -50,7 +50,7 @@ def build_persona(name=None, language="English"):
     ---
     **First Introduction:**
     If you understand all these instructions, please introduce yourself to **{name if name else 'our valued customer'}**.
-    Make your introduction funny and concise **2 short sentences**, using 1 or 2 emojis to make it warming and converse in {language}.
+    Make your introduction funny and in **2 short sentences**, using 1 or 2 emojis to make it warming and converse in {language}.
     Ask how you can assist them today, mentioning they can ask food questions or even upload food images for identification in {language}.
     """
     return persona_prompt
@@ -116,7 +116,7 @@ def build_prompt(user_text, name=None, image_count=0, language="English", chat_h
 
 
 # ------------------- Function to generate text content ----------------------------
-def generate_content(model="gemini-2.5-flash", prompt_parts=None, language="English"):
+def generate_content(model="gemini-2.5-flash", prompt_parts=None, language="English", original_text=""):
     try:
         # Initial generation
         response = client.models.generate_content(
@@ -128,7 +128,7 @@ def generate_content(model="gemini-2.5-flash", prompt_parts=None, language="Engl
                 temperature=0.7,
                 topP=1,
                 topK=1,
-                maxOutputTokens=500
+                maxOutputTokens=512
             )
         )
         #print(f"Response: {response}")
@@ -139,7 +139,7 @@ def generate_content(model="gemini-2.5-flash", prompt_parts=None, language="Engl
         
             # Call backend API with args
             api_result = call_fastapi_endpoint(func_name, **func_args)
-            #print(api_result)
+            print(api_result)
 
             # Optional: get function description for logging
             description = next(
@@ -149,11 +149,9 @@ def generate_content(model="gemini-2.5-flash", prompt_parts=None, language="Engl
             #print(f"Function Role: {description}")
             #print(api_result)
             # Regenerate response with function output as context
-            new_prompt = "User: "
-            new_prompt += next((line.strip()[len("User:"):].strip() for line in reversed(prompt_parts.strip().split('\n')) if line.strip().startswith("User:")), None)
-            new_prompt += "Data: "
-            new_prompt += json.dumps(api_result, indent=2)
-            new_prompt += f"Chatting in {language}, {tool_response_format(func_name)}"
+            new_prompt = "User: " + original_text
+            new_prompt += "\nData: " + json.dumps(api_result, indent=2)
+            new_prompt += f"\nChatting in {language}, {tool_response_format(func_name)}"
             
             #print(new_prompt)
             final_response = client.models.generate_content(
@@ -164,10 +162,10 @@ def generate_content(model="gemini-2.5-flash", prompt_parts=None, language="Engl
                     temperature=0.7,
                     topP=1,
                     topK=1,
-                    maxOutputTokens=512
+                    maxOutputTokens=2500
                 )
             )
-            #print(final_response)
+            print(final_response)
             return final_response.text.strip().replace("\n", "<br>")
 
         # No function call? Return original reply
@@ -196,19 +194,23 @@ def tool_response_format(tool_called="Unknown function"):
         context += "Provide general user profile information. Politely suggest Foodie items and ask if they've tried them, subtly promoting the brand. You can also make suggestions based on their order history and wallet balance."
 
     elif tool_called == "get_user_wallet_balance_api":
-        context += "Return the exact wallet balance in naira. Offer further assistance like, 'Ready to treat yourself to something tasty? Pick anything your money can buy 💳😋'"
+        context += "Return the exact wallet balance in ₦. in .2dp **On the immediate next line, offer further assistance and conclude with an engaging, encouraging phrase to prompt a food purchase, similar to 'Ready to treat yourself to something tasty? Pick anything your naira can buy! 💳😋' but rephrased.**"
 
     elif tool_called == "get_user_last_orders_api":
-        context += "List the last few orders with items and total, including the day of the order. Ask if they want to reorder or try something new. If they order the same thing consecutively, jovially ask if they want to repeat or try something different. Example: 'Here are your last delicious Foodie orders! You recently enjoyed: - [Order 1 items] for ₦[Total 1] on [day of date] - [Order 2 items] for ₦[Total 2] on [day of date] I hope you left a review. Feeling like a repeat day or something new from our menu today? 😋'"
-
+         context += "Return the last order: food, day, and date (no year). On the immediate next line, generate an engaging question about reordering or trying new items, also prompting for a review. **Rephrase this question in their language.** Do NOT copy the example directly. **Example tone/purpose:** 'Hope you left a review! Feeling like a repeat day or something new from our menu today? 😋'"
+    
     elif tool_called == "get_full_menu_api":
-        context += """Start with a fun introduction. List all menu item categories with one random sample item per category. Example:
-                - Main dishes: Jollof rice,  Rice And Beans, ...
-                - Soups: Banga, Ogbono ...
-                - Sides: Puff Puff, Akara, ...
-                And so on for all five categories.
-                After listing the categories, suggest a delicious food combination. Example: 'Why not try our Eba and Egusi soup with Titus fish, perfectly paired with a refreshing bottle of Chapman, all for just ₦5000? You'll love it! 🤗'
-                """
+        context += """List all menu item categories with **few unique sample item per category starting from Main Menu**. **DO NOT copy these category examples directly, and don't bolden anything, and don't leave empty lines where unnecessary. Example format for categories:**
+                    - Main dishes: Sample Main Dishes, e.g., Jollof Rice, Coconut rice
+                    - Soups: Sample Soups, e.g., Egusi, Afang
+                    - Sides: Sample Sides, e.g., Puff Puff, Small chops
+                    - Proteins: Sample Proteins, e.g., Hake Fish
+                    - Swallows: Sample Swallows, e.g., Amala
+                    - Extras: Sample Extras, e.g., Plantain
+                    - Drinks: Sample Drinks, e.g., Palmwine
+                    (Ensure all relevant categories are listed.)
+
+                    After listing categories, **converse in the language and generate a unique, delicious food combination suggestion with a price. DO NOT copy the example combination directly. Example tone/style for combination:** 'Why not try our Pounded Yam with Egusi soup and Titus fish, perfectly paired with a refreshing bottle of Chapman and a side of Plantain, all for just ₦3500? You'll love it!🤗'"""
 
     elif tool_called == "get_menu_category_api":
         context += "Provide items with their prices in naira for the requested menu category in a conversational context. You may or may not include fun facts, a short statement on food category, or anything jovial and engaging about the category/food."
@@ -231,4 +233,4 @@ def tool_response_format(tool_called="Unknown function"):
     else:
         context = "No specific context. Represent the Foodie Brand well and jovially. Apologize if relevant to the conversation."
 
-    return context
+    return str(context)
