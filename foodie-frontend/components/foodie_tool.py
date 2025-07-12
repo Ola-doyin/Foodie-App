@@ -6,7 +6,7 @@ from google.genai.types import FunctionDeclaration
 
 
 # === CONFIGURATION ===
-FASTAPI_BASE_URL = "https://foodie-backend.onrender.com"  # Your FastAPI backend
+FASTAPI_BASE_URL = "https://foodie-backend-mq80.onrender.com" # Your FastAPI backend
 
 
 

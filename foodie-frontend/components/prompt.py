@@ -8,8 +8,9 @@ from components.foodie_tool import *
 import json
 import random
 
+
 # === Configure Client and Tools ===
-load_dotenv("./env.txt")
+load_dotenv(os.path.join(os.path.dirname(__file__), "..", "env.txt"))
 api_key = os.getenv("GEMINI_API_KEY")
 client = genai.Client(api_key=api_key)
 tools = types.Tool(function_declarations=restaurant_tools)

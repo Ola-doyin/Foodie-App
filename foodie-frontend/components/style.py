@@ -185,19 +185,26 @@ def custom_chat_input_css():
     </style>
     """
 
+
 def chat_bubble(sender, message):
+    # Get absolute path to the current file's directory
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    asset_path = os.path.join(base_dir, "..", "assets")
+
     if sender == "bot":
         container_class = "bot-chat-container"
-        bubble_class = "bot-bubble" 
-        with open(os.path.join("assets", "bot.png"), "rb") as image_file:
-            encoded_icon = base64.b64encode(image_file.read()).decode()
-        icon_url = f"data:image/png;base64,{encoded_icon}"
+        bubble_class = "bot-bubble"
+        icon_file = "bot.png"
     else:
         container_class = "user-chat-container"
         bubble_class = "user-bubble"
-        with open(os.path.join("assets", "user.png"), "rb") as image_file:
-            encoded_icon = base64.b64encode(image_file.read()).decode()
-        icon_url = f"data:image/png;base64,{encoded_icon}"
+        icon_file = "user.png"
+
+    # Load icon
+    icon_full_path = os.path.join(asset_path, icon_file)
+    with open(icon_full_path, "rb") as image_file:
+        encoded_icon = base64.b64encode(image_file.read()).decode()
+    icon_url = f"data:image/png;base64,{encoded_icon}"
 
     return f"""
     <style>
@@ -271,7 +278,6 @@ def chat_bubble(sender, message):
         </div>
     </div>
     """
-
 
 def custom_sidebar_css():
     return """

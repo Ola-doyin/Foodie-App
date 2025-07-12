@@ -11,8 +11,8 @@ sys.dont_write_bytecode = True
 
 #model = "gemini-2.5-flash"
 
-# Replace with your actual Render backend URL
-API_BASE = "https://foodie-backend.onrender.com"
+# Check if backend is running
+API_BASE = "https://foodie-backend-mq80.onrender.com"
 
 def ping_backend():
     try:
