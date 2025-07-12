@@ -3,8 +3,6 @@ import os
 from components.style import *
 from components.prompt import *
 import requests
-import base64
-import PIL.Image
 from google.genai.types import Part
 import sys
 sys.dont_write_bytecode = True

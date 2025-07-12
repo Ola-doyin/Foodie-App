@@ -50,67 +50,26 @@ def build_persona(name=None, language="English"):
     ---
     **First Introduction:**
     If you understand all these instructions, please introduce yourself to **{name if name else 'our valued customer'}**.
-    Make your introduction funny and concise (2 sentences), using 1 or 2 emojis to make it warming and converse in {language}.
+    Make your introduction funny and concise **2 short sentences**, using 1 or 2 emojis to make it warming and converse in {language}.
     Ask how you can assist them today, mentioning they can ask food questions or even upload food images for identification in {language}.
     """
     return persona_prompt
 
 
 persona = """You are Foodie, the friendly, concise (3-4 sentences) and sometimes funny AI assistant😊 for the Foodie Restaurant 
-             Chain, Lagos Nigeria. Your job is to happily help users with:
+             Chain, Lagos Nigeria. Your job is to happily help users in their selected language with:
              1. food-related queries, **including specifically identifying the food in food images,**  
              2. using available tools to guide them towards ordering and make reservations
              3. learning and discovering every facts and stories about foods and meals
              4. answering questions about foodie on based on the data and knowledge you have
              5. subtly push the foodie brand to encourage them to patronize us
              6. performing customer transactions all in naira currency based on the data you have
+             7. generate invoices for all transactions completed
              Use 0-2 emojis (mostly food emojis) to enhance engagement and also hold the conversions in the selected customer language. 
              Politely redirect non-food queries by recommending to expert fields if needed and cooking-related questions by subtly pushing 
              the foodie brand. If asked, identify as 'Foodie, the personal food friend/companion. Make your conversation natural and not 
              over-playful like exclaiming at the beginning of your response.
              Remember, keep the chat lively as you help them discover the world of foods and Foodie in their selected language."""
-
-
-def tool_response_format(tool_called="Unknown function"):
-    context = "Answer the user in their selected language and in this format: "
-
-    if tool_called == "get_current_user_info_api":
-        context += "Provide general user profile information. Politely suggest Foodie items and ask if they've tried them, subtly promoting the brand. You can also make suggestions based on their order history and wallet balance."
-
-    elif tool_called == "get_user_wallet_balance_api":
-        context += "Return the exact wallet balance in naira. Offer further assistance like, 'Ready to treat yourself to something tasty? Pick anything your money can buy 💳😋'"
-
-    elif tool_called == "get_user_last_orders_api":
-        context += "List the last few orders with items and total, including the day of the order. Ask if they want to reorder or try something new. If they order the same thing consecutively, jovially ask if they want to repeat or try something different. Example: 'Here are your last delicious Foodie orders! You recently enjoyed: - [Order 1 items] for ₦[Total 1] on [day of date] - [Order 2 items] for ₦[Total 2] on [day of date] I hope you left a review. Feeling like a repeat day or something new from our menu today? 😋'"
-
-    elif tool_called == "get_full_menu_api":
-        context += "Start with a fun introduction. List all menu items categorized, showing item name and price with bullet points. After the list, suggest a popular item from the menu, optionally adding a health fact about it. Example: 'Our menu from the Foodie kitchen includes: - Main dishes: Jollof rice #500, Village rice ... /n - Soups: Egusi #500, Ogbono #590, Pepper Soup #580 ... /nWhy not try our delicious Egusi soup today? It's a real treat! 🍲'"
-
-    elif tool_called == "get_menu_category_api":
-        context += "Provide items for the requested menu category in a conversational context. You can include fun facts, short statements on food origin, or anything jovial and engaging about the food."
-
-    elif tool_called == "list_all_branches_api":
-        context += "List all Foodie branches. Engage the user by asking their location and if they'd like to order or make table reservations, ensuring a coherent conversation flow."
-
-    elif tool_called == "get_branch_details_api":
-        context += "Provide all relevant details about the requested Foodie branch (location, managers, available tables, specials, hours). Answer in a friendly, conversational context."
-
-    elif tool_called == "book_table_api":
-        context += "Assist the user with table inquiries, checking availability and price. Then, take their booking for a table at their preferred available branch."
-
-    elif tool_called == "location":
-        context += "Based on the conversation, use this location info to estimate distance to the nearest branch and delivery time. Handle Foodie location queries and inventory checks from this command."
-
-    elif tool_called == "place_order_api":
-        context += "If the user wants to place an order, first ask for their location if not already known. Then, handle the order, place it, generate an invoice, and estimate delivery time to their location. Be friendly."
-
-    else:
-        context = "No specific context. Represent the Foodie Brand well and jovially. Apologize if relevant to the conversation."
-
-    return context
-
-
-
 
 
 # --- Use name in prompt ---------
@@ -188,14 +147,15 @@ def generate_content(model="gemini-2.5-flash", prompt_parts=None, language="Engl
                 "Function role not found"
             )
             #print(f"Function Role: {description}")
-            print(api_result)
+            #print(api_result)
             # Regenerate response with function output as context
             new_prompt = "User: "
             new_prompt += next((line.strip()[len("User:"):].strip() for line in reversed(prompt_parts.strip().split('\n')) if line.strip().startswith("User:")), None)
             new_prompt += "Data: "
             new_prompt += json.dumps(api_result, indent=2)
+            new_prompt += f"Chatting in {language}, {tool_response_format(func_name)}"
             
-            print(new_prompt)
+            #print(new_prompt)
             final_response = client.models.generate_content(
                 model=model,
                 contents=new_prompt,
@@ -207,7 +167,7 @@ def generate_content(model="gemini-2.5-flash", prompt_parts=None, language="Engl
                     maxOutputTokens=512
                 )
             )
-            print(final_response)
+            #print(final_response)
             return final_response.text.strip().replace("\n", "<br>")
 
         # No function call? Return original reply
@@ -227,3 +187,48 @@ def generate_content(model="gemini-2.5-flash", prompt_parts=None, language="Engl
             return "Ah-ahn! 🤖 E be like say I no fit answer dat one. Abeg, try ask am anoda way? I ready to help you! 😊"
         else:
             return "🤖 FoodieBot couldn’t generate a reply. Try rephrasing your input."
+
+
+def tool_response_format(tool_called="Unknown function"):
+    context = "answer in this format: "
+
+    if tool_called == "get_current_user_info_api":
+        context += "Provide general user profile information. Politely suggest Foodie items and ask if they've tried them, subtly promoting the brand. You can also make suggestions based on their order history and wallet balance."
+
+    elif tool_called == "get_user_wallet_balance_api":
+        context += "Return the exact wallet balance in naira. Offer further assistance like, 'Ready to treat yourself to something tasty? Pick anything your money can buy 💳😋'"
+
+    elif tool_called == "get_user_last_orders_api":
+        context += "List the last few orders with items and total, including the day of the order. Ask if they want to reorder or try something new. If they order the same thing consecutively, jovially ask if they want to repeat or try something different. Example: 'Here are your last delicious Foodie orders! You recently enjoyed: - [Order 1 items] for ₦[Total 1] on [day of date] - [Order 2 items] for ₦[Total 2] on [day of date] I hope you left a review. Feeling like a repeat day or something new from our menu today? 😋'"
+
+    elif tool_called == "get_full_menu_api":
+        context += """Start with a fun introduction. List all menu item categories with one random sample item per category. Example:
+                - Main dishes: Jollof rice,  Rice And Beans, ...
+                - Soups: Banga, Ogbono ...
+                - Sides: Puff Puff, Akara, ...
+                And so on for all five categories.
+                After listing the categories, suggest a delicious food combination. Example: 'Why not try our Eba and Egusi soup with Titus fish, perfectly paired with a refreshing bottle of Chapman, all for just ₦5000? You'll love it! 🤗'
+                """
+
+    elif tool_called == "get_menu_category_api":
+        context += "Provide items with their prices in naira for the requested menu category in a conversational context. You may or may not include fun facts, a short statement on food category, or anything jovial and engaging about the category/food."
+
+    elif tool_called == "list_all_branches_api":
+        context += "List all Foodie branches. Engage the user by asking their location and if they'd like to order or make table reservations, ensuring a coherent conversation flow."
+
+    elif tool_called == "get_branch_details_api":
+        context += "Provide all relevant details about the requested Foodie branch (location, managers, available tables, specials, hours). Answer in a friendly, conversational context."
+
+    elif tool_called == "book_table_api":
+        context += "Assist the user with table inquiries, checking availability and price. Then, take their booking for a table at their preferred available branch."
+
+    elif tool_called == "location":
+        context += "Based on the conversation, use this location info to estimate distance to the nearest branch and delivery time. Handle Foodie location queries and inventory checks from this command."
+
+    elif tool_called == "place_order_api":
+        context += "If the user wants to place an order, first ask for their location if not already known. Then, handle the order, place it, generate an invoice, and estimate delivery time to their location. Be friendly."
+
+    else:
+        context = "No specific context. Represent the Foodie Brand well and jovially. Apologize if relevant to the conversation."
+
+    return context
