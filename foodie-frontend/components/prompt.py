@@ -7,7 +7,7 @@ from google.genai.types import Part
 from components.foodie_tool import *
 import json
 import random
-import re
+import requests
 
 # === Configure Client and Tools ===
 load_dotenv(os.path.join(os.path.dirname(__file__), "..", "env.txt"))
@@ -67,8 +67,8 @@ persona = """You are Foodie, the friendly, concise (3-4 sentences) and sometimes
              7. generate invoices for all transactions completed
              Use 0-2 emojis (mostly food emojis) to enhance engagement and also hold the conversions in the selected customer language. 
              Politely redirect non-food queries by recommending to expert fields if needed and cooking-related questions by subtly pushing 
-             the foodie brand. If asked, identify as 'Foodie, the personal food friend/companion. Make your conversation natural and not 
-             over-playful like exclaiming at the beginning of your response.
+             the foodie brand. If asked, identify as 'Foodie, the personal food friend/companion. **Make your conversation natural and not 
+             over-playful like exclaiming at the beginning of your response.**
              Remember, keep the chat lively as you help them discover the world of foods and Foodie in their selected language."""
 
 
@@ -136,10 +136,10 @@ def generate_content(model="gemini-2.5-flash", prompt_parts=None, language="Engl
         if response.candidates[0].content.parts[0].function_call:
             func_name = response.candidates[0].content.parts[0].function_call.name
             func_args = response.candidates[0].content.parts[0].function_call.args
-        
-            # Call backend API with args
+
             api_result = call_fastapi_endpoint(func_name, **func_args)
-            print(api_result)
+            
+            #print(api_result)
 
             # Optional: get function description for logging
             description = next(
@@ -149,9 +149,12 @@ def generate_content(model="gemini-2.5-flash", prompt_parts=None, language="Engl
             #print(f"Function Role: {description}")
             #print(api_result)
             # Regenerate response with function output as context
-            new_prompt = "User: " + original_text
-            new_prompt += "\nData: " + json.dumps(api_result, indent=2)
-            new_prompt += f"\nChatting in {language}, {tool_response_format(func_name)}"
+            try: 
+                new_prompt = "User: " + original_text
+                new_prompt += "\nData: " + json.dumps(api_result, indent=2)
+                new_prompt += f"\nChatting in {language}, {tool_response_format(func_name)}"
+            except requests.exceptions.RequestException as e:
+                return "Server down "
             
             #print(new_prompt)
             final_response = client.models.generate_content(
@@ -165,7 +168,7 @@ def generate_content(model="gemini-2.5-flash", prompt_parts=None, language="Engl
                     maxOutputTokens=2500
                 )
             )
-            print(final_response)
+            #print(final_response)
             return final_response.text.strip().replace("\n", "<br>")
 
         # No function call? Return original reply
@@ -188,7 +191,7 @@ def generate_content(model="gemini-2.5-flash", prompt_parts=None, language="Engl
 
 
 def tool_response_format(tool_called="Unknown function"):
-    context = "answer in this format: "
+    context = "**Never repeat user's query back to them** and creatively answer in this format: "
 
     if tool_called == "get_current_user_info_api":
         context += "Provide general user profile information. Politely suggest Foodie items and ask if they've tried them, subtly promoting the brand. You can also make suggestions based on their order history and wallet balance."
@@ -200,7 +203,7 @@ def tool_response_format(tool_called="Unknown function"):
          context += "Return the last order: food, day, and date (no year). On the immediate next line, generate an engaging question about reordering or trying new items, also prompting for a review. **Rephrase this question in their language.** Do NOT copy the example directly. **Example tone/purpose:** 'Hope you left a review! Feeling like a repeat day or something new from our menu today? 😋'"
     
     elif tool_called == "get_full_menu_api":
-        context += """List all menu item categories with **few unique sample item per category starting from Main Menu**. **DO NOT copy these category examples directly, and don't bolden anything, and don't leave empty lines where unnecessary. Example format for categories:**
+        context += """converse in the language, provide menu item categories with **few unique sample item per category starting from Main Menu based on the prompt**. **DO NOT copy these category examples directly, and don't bolden anything, and don't leave empty lines where unnecessary. Example format for categories:**
                     - Main dishes: Sample Main Dishes, e.g., Jollof Rice, Coconut rice
                     - Soups: Sample Soups, e.g., Egusi, Afang
                     - Sides: Sample Sides, e.g., Puff Puff, Small chops
@@ -208,27 +211,30 @@ def tool_response_format(tool_called="Unknown function"):
                     - Swallows: Sample Swallows, e.g., Amala
                     - Extras: Sample Extras, e.g., Plantain
                     - Drinks: Sample Drinks, e.g., Palmwine
-                    (Ensure all relevant categories are listed.)
+                    (**respond based on the user's prompt and Ensure relevant categories are listed if the full menu is requested**.)
 
-                    After listing categories, **converse in the language and generate a unique, delicious food combination suggestion with a price. DO NOT copy the example combination directly. Example tone/style for combination:** 'Why not try our Pounded Yam with Egusi soup and Titus fish, perfectly paired with a refreshing bottle of Chapman and a side of Plantain, all for just ₦3500? You'll love it!🤗'"""
+                    After listing categories, **converse in the language and generate a unique, delicious food combination suggestion with a price in 1-2 sentences. DO NOT copy the example combination directly. Example tone/style for combination:** 'Why not try our Pounded Yam with Egusi soup and Titus fish, perfectly paired with a refreshing bottle of Chapman and a side of Plantain, all for just ₦3500? You'll love it!🤗'"""
 
     elif tool_called == "get_menu_category_api":
-        context += "Provide items with their prices in naira for the requested menu category in a conversational context. You may or may not include fun facts, a short statement on food category, or anything jovial and engaging about the category/food."
-
+        context += "Return items and their prices (in ₦) for the requested menu category. Ensure the response is relevant to user's request, conversational, engaging, **but not awkwardly personal** and creatively includes a fun fact, a short jovial statement about the category/food, or other delightful content. **Converse in the language, don't bolden anything and don't use empty lines where unnecessary**✨"
+    
     elif tool_called == "list_all_branches_api":
-        context += "List all Foodie branches. Engage the user by asking their location and if they'd like to order or make table reservations, ensuring a coherent conversation flow."
+        context += """Start by identifying and providing Foodie branches relevant to the user's request. If the user's location is known or inferable from their prompt, provide the nearest branch. Otherwise, list all available branches. After providing the branch information, warmly engage the user by asking for their current location (if not already known) and if they'd like to place an order or make a table reservation. Ensure the entire reply maintains a seamless, friendly, and helpful conversational flow. **Chat in the selected language, don't use empty lines where unnecessary and creactively generate the concise response in a natural chat style.**"""
 
     elif tool_called == "get_branch_details_api":
-        context += "Provide all relevant details about the requested Foodie branch (location, managers, available tables, specials, hours). Answer in a friendly, conversational context."
+        context += "**Creatively response specifically with relevant details about the requested Foodie branch (location, managers, available tables, specials, hours) based on the user's prompt in selected language**. Answer in a friendly, conversational context. **Don't use empty lines where unnessary and don't bolden anything, just * * instead**"
 
     elif tool_called == "book_table_api":
-        context += "Assist the user with table inquiries, checking availability and price. Then, take their booking for a table at their preferred available branch."
+        context += "Assist the user with table inquiries, **listing the yables, checking availability and their price**. Then, take their booking for a table at their preferred available branch. **Generate an invoice at the booking and handle the billing**"
 
     elif tool_called == "location":
-        context += "Based on the conversation, use this location info to estimate distance to the nearest branch and delivery time. Handle Foodie location queries and inventory checks from this command."
+        context += "Based on the user's provided (or inferred) location, estimate the distance to their nearest Foodie branch and the estimated delivery time. Provide this information in a friendly, conversational tone, directly addressing their location-based query. Make sure your response is helpful and clear."
 
     elif tool_called == "place_order_api":
-        context += "If the user wants to place an order, first ask for their location if not already known. Then, handle the order, place it, generate an invoice, and estimate delivery time to their location. Be friendly."
+        context += """Upon the user's explicit confirmation to finalize and submit their order (after they have finished selecting all items and details):
+        If their location is not already known, politely ask for it.
+        Then, proceed to submit the complete order for placement. Upon successful order submission and deduction from their wallet, provide a clear, friendly, and reassuring order confirmation to the user. 
+        **Do not dedcut money from wallet before user's explicit consent. After confirmation generate final invoice details (items ordered, total cost) and deduct the money from wallet**, and the estimated delivery time to their location. Generate the response in a natural chat style in their selected language. Avoid unnecessary empty lines. """
 
     else:
         context = "No specific context. Represent the Foodie Brand well and jovially. Apologize if relevant to the conversation."

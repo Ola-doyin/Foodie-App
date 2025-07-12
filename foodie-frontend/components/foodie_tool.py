@@ -106,7 +106,7 @@ restaurant_tools = [
                 },
                 "table_type": {
                     "type": "string",
-                    "description": "The type of table to book, e.g., '2-person', 'family', 'vip'."
+                    "description": "The type of table to book, e.g., 'table_for_2', 'table_for_3', 'table_for_5', 'table_for_8', 'vip'."
                 }
             },
             "required": ["location", "table_type"],
