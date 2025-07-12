@@ -12,8 +12,7 @@ Powered by a **Streamlit frontend**, a **FastAPI backend**, and **Google Gemini 
 You can use Foodie Web App in two ways: locally or via the deployed links.
 ⚠️ **Note:** The user interface is optimized for **desktop/laptop view only** and may not render properly on mobile devices.
 
-<div style="margin-top: 12px;"></div>
-
+<pre>
 #### 🟢 Option 1: Use Deployed Versions (No Setup Needed)
 
 - **Frontend (Chat UI):** [https://foodie-app.streamlit.app](https://foodie-app.streamlit.app)  
@@ -22,8 +21,6 @@ You can use Foodie Web App in two ways: locally or via the deployed links.
 > **Instructions:**  
 > First, click the **Backend API** link to wake up the Render server (it may take a few seconds).  
 > Once it's running, click the **Frontend UI** link to launch the app and start chatting.
-
-<div style="margin-top: 12px;"></div>
 
 #### ⚙️ Option 2: Run Locally on Your Machine
 
@@ -53,7 +50,7 @@ You can use Foodie Web App in two ways: locally or via the deployed links.
 ```bash
     GEMINI_API_KEY=your_google_gemini_api_key_here
 ```
-
+</pre>
 
 <br>
 
