@@ -294,6 +294,10 @@ async def place_order(request:PlaceOrderFullRequest):
     vat = (vat_percentage / 100) * total
     grand_total = total + vat
 
+    # ⚠️ Validate frontend total
+    #if abs(grand_total - request.total_cost) > 1e-2:
+    #    raise HTTPException(status_code=400, detail="Mismatch in total cost submitted.")
+
     if current_user["wallet_balance"] < grand_total:
         raise HTTPException(status_code=400, detail="Insufficient wallet balance.")
 

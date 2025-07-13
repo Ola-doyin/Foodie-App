@@ -67,6 +67,7 @@ persona = """You are Foodie, the friendly, concise (3-4 sentences) and sometimes
              7. **generate and update provisional invoices for all provisional ordering or bookings**
              8. generate reciept for all transactions completed
              9. If the user **asks to add or remove food items from their invoice in whatever language, update the previous invoice based on their request**.
+             10. **If server is down in the previous chat, reset the server and never loop in the server is down context**
              Use 0-2 emojis (mostly food emojis) to enhance engagement and also hold the conversions in the selected customer language. 
              Politely redirect non-food queries by recommending to expert fields if needed and cooking-related questions by subtly pushing 
              the foodie brand. If asked, identify as 'Foodie, the personal food friend/companion. **Make your conversation natural and not 
@@ -143,7 +144,7 @@ def generate_content(model="gemini-2.5-flash", prompt_parts=None, language="Engl
                 api_result = call_fastapi_endpoint(func_name, **func_args)
             except requests.exceptions.RequestException as e:
                 print(f"FastAPI Error: {e}")
-                return "🖥️ Server is temporarily down. 🔧 We'll be back online shortly ✨"
+                return "🖥️ Server is temporarily down. 🔧 We'll reset this second ✨"
 
             # Optional: get function description for logging
             description = next(
@@ -174,7 +175,7 @@ def generate_content(model="gemini-2.5-flash", prompt_parts=None, language="Engl
                 return final_response.text.strip().replace("\n", "<br>")
             except requests.exceptions.RequestException as e:
                 print(f"Final response error: {e}")
-                return "🖥️⚙️ Server is temporarily down. We'll be back online shortly ✨"
+                return "🖥️⚙️ Server is temporarily down. We'll reset this second ✨"
 
         # If no function call is present, return the direct response
         return response.text.strip().replace("\n", "<br>")
@@ -233,6 +234,16 @@ def tool_response_format(tool_called="Unknown function"):
         context += """Assist the user with table inquiries, listing the tables, checking availability and their price.
                  1. **Generate an invoice of the booking, ask the user if you should go ahead with the booking process**
                  2. If the user gives you the go ahead to book the table at their selected branch, then **Generate a final receipt of the booking and handle the billing
+                 
+                 **Example of Receipt**
+                Booking Receipt:
+                ---------------------------
+                Table Type:   Table for 2
+                Branch:   Ikeja
+                Amount Paid:      ₦7,600.00
+                ---------------------------
+
+                New Wallet Balance: ₦28100.70
                  """
         
     elif tool_called == "location":
@@ -240,7 +251,7 @@ def tool_response_format(tool_called="Unknown function"):
 
     elif tool_called == "pre_order_api":
         context += """You are assisting the user with making a food order. Respond in the selected language and follow these instructions:
-            1. Always respond with a neat **updated provisional invoice** showing **all requested Item** names, Quantities, Unit prices, Subtotals, VAT (if applicable), Grand total
+            1. Always respond with a neat **updated provisional invoice** showing **all requested Item** names, Quantities, Unit prices, Subtotals, VAT (if applicable), Grand total **If the invoice isn't empty**
             3. After presenting the invoice, creativitively engage the user by asking a "to do" question. For example: “Would you like to go ahead with this order
             or would you like to make changes to the oreder?” If the user confirms, the order will be placed in the next step.
             Do not bold or format the invoice with asterisks.
@@ -278,9 +289,8 @@ def tool_response_format(tool_called="Unknown function"):
 
     elif tool_called == "place_order_api":
         context += """Upon the user's explicit confirmation to finalize and submit their order (after they have finished selecting all items and details):
-        If their location is not already known, politely ask for it.
-        Then, proceed to submit the complete order for placement. Upon successful order submission and deduction from their wallet, provide a clear, friendly, and reassuring order confirmation to the user **with receipt**. 
-        **Do not dedcut money from wallet before user's explicit consent. After confirmation generate final invoice details (items ordered, total cost) and deduct the money from wallet**, and the estimated delivery time to their location. Generate the response in a natural chat style in their selected language. Avoid unnecessary empty lines. 
+        Then, proceed to submit the complete order for placement **Using the correct item names from the previous invoice**. Upon successful order submission and deduction from their wallet, provide a clear, friendly, and reassuring order confirmation to the user **with receipt**. 
+        **Do not dedcut money from wallet before user's explicit consent. After confirmation generate final invoice details (items ordered, total cost) and deduct the money from wallet**, and the estimated delivery time to their location. Generate the response in a natural chat style in their selected language. Avoid unnecessary empty lines and astericks. 
         
         **Example of Receipt**
         Receipt:
@@ -295,6 +305,8 @@ def tool_response_format(tool_called="Unknown function"):
 
         Time-stamp: 13/07/2025 6:00pm
         Status: Paid
+
+        **If their location is not already known, politely ask for it**. So you can tell them the nearest branch to get the food or how long it will take to dispatch from that branch
         """
 
     else:
