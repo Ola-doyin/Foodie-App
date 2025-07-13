@@ -112,7 +112,7 @@ if prompt:
                 chat_history=st.session_state.messages
             ),
             language=st.session_state.get("language_choice", "English"),
-            original_text=prompt.text.strip().replace("\n", "<br>")
+            chat_history=st.session_state.messages[-2:]
         )
 
         st.session_state.messages.append({"role": "bot", "content": response_text})
@@ -149,7 +149,7 @@ if prompt:
         response_text = generate_content(
             prompt_parts=prompt_parts,
             language=st.session_state.get("language_choice", "English"),
-            original_text=prompt.text.strip().replace("\n", "<br>")
+            chat_history=st.session_state.messages[-2:]
         )
 
         st.session_state.messages.append({"role": "bot", "content": response_text})

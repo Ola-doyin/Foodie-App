@@ -27,10 +27,9 @@ def call_fastapi_endpoint(function_name: str, **kwargs):
             "location": kwargs["location"],
             "table_type": kwargs["table_type"]
         }),
-        "pre_order_api": lambda: requests.post(f"{FASTAPI_BASE_URL}/pre_order/", json={
-            "items": kwargs["items"]  # List of {"name": ..., "quantity": ...}
-        }
-        ),
+        "pre_order_api": lambda: requests.get(f"{FASTAPI_BASE_URL}/menu"),
+        #"pre_order_api": lambda **kwargs: requests.post(f"{FASTAPI_BASE_URL}/pre_order/", json={"items": kwargs.get("items", [])}),
+
         "place_order_api": lambda: requests.post(f"{FASTAPI_BASE_URL}/place_order/", json={
             "items": kwargs["items"],            # Same structure as pre_order
             "total_cost": kwargs["total_cost"]   # float value
@@ -65,7 +64,7 @@ restaurant_tools = [
     ),
     FunctionDeclaration(
         name="get_full_menu_api",
-        description="Get the full categorized menu and prices in naira.",
+        description="Get the full categorized menu and prices in naira **DO NOT HANDLE MENU BY GIVEN CATEGORY OR ORDER PROMPTS**.",
         parameters={},
     ),
     FunctionDeclaration(
@@ -145,26 +144,31 @@ restaurant_tools = [
     ),
     FunctionDeclaration(
         name="pre_order_api",
-        description="**BEFORE USER'S CONFIRMATION**, Gives a provisional summary or invoice for a requested food order with quantities. **This does NOT place the order or deduct money.**",
-        parameters={
-            "type": "object",
-            "properties": {
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "name": {"type": "string"},
-                            "quantity": {"type": "integer", "minimum": 1}
-                        },
-                        "required": ["name", "quantity"]
-                    },
-                    "description": "A list of food items with quantities, e.g., [{\"name\": \"Jollof Rice\", \"quantity\": 2}]"
-                }
-            },
-            "required": ["items"],
-        },
+        description="Give a provisional and updatable **invoice for all the requested food items and updated invoices with quantities and prices**. This does NOT place the order or deduct money.",
+        parameters={},
     ),
+    #FunctionDeclaration(
+    #    name="pre_order_api",
+    #    description="Give a provisional and updatable **invoice for all the requested food items and updated invoices with quantities and prices**. This does NOT place the order or deduct money.",
+    #    parameters={
+    #        "type": "object",
+    #        "properties": {
+    #           "items": {
+    #                "type": "array",
+    #                "items": {
+    #                    "type": "object",
+    #                    "properties": {
+    #                        "name": {"type": "string"},
+    #                        "quantity": {"type": "integer", "minimum": 1}
+    #                    },
+    #                    "required": ["name", "quantity"]
+    #                },
+    #                "description": "A list of food items with quantities, e.g., [{\"name\": \"Jollof Rice\", \"quantity\": 2}]"
+    #            }
+    #        },
+    #        "required": ["items"],
+    #    },
+    #),
     FunctionDeclaration(
         name="place_order_api",
         description="**AFTER USER'S CONFIRMATION**, Place a food order (deducts total from wallet), adds order to last orders, generates receipt.",
