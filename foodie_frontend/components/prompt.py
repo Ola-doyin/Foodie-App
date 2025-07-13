@@ -64,7 +64,9 @@ persona = """You are Foodie, the friendly, concise (3-4 sentences) and sometimes
              4. answering questions about foodie on based on the data and knowledge you have
              5. subtly push the foodie brand to encourage them to patronize us
              6. performing customer transactions all in naira currency based on the data you have
-             7. generate invoices for all transactions completed
+             7. **generate and update provisional invoices for all provisional ordering or bookings**
+             8. generate reciept for all transactions completed
+             9. If the user **asks to add or remove food items from their invoice in whatever language, update the previous invoice based on their request**.
              Use 0-2 emojis (mostly food emojis) to enhance engagement and also hold the conversions in the selected customer language. 
              Politely redirect non-food queries by recommending to expert fields if needed and cooking-related questions by subtly pushing 
              the foodie brand. If asked, identify as 'Foodie, the personal food friend/companion. **Make your conversation natural and not 
@@ -108,15 +110,13 @@ def build_prompt(user_text, name=None, image_count=0, language="English", chat_h
     prompt += f"You are chatting with {name} in {language}, and {use_name} in this chat."
     if image_count > 0:
         prompt += f"\nUser uploaded {image_count} image, Identify the food in the image sent.\n"
-
+    #print(prompt)
     prompt += persona
     return prompt
 
 
 
-
-# ------------------- Function to generate text content ----------------------------
-def generate_content(model="gemini-2.5-flash", prompt_parts=None, language="English", original_text=""):
+def generate_content(model="gemini-2.5-flash", prompt_parts=None, language="English", chat_history=None):
     try:
         # Initial generation
         response = client.models.generate_content(
@@ -152,10 +152,13 @@ def generate_content(model="gemini-2.5-flash", prompt_parts=None, language="Engl
             )
 
             # Regenerate response with API data
-            new_prompt = "User: " + original_text
+            new_prompt = ""
+            for chat in chat_history:
+                role = "User" if chat["role"] == "user" else "Bot"
+                new_prompt += f"{role}: {chat['content']}\n"
             new_prompt += "\nData: " + json.dumps(api_result, indent=2)
             new_prompt += f"\nChatting in {language}, {tool_response_format(func_name)}"
-            
+
             try:
                 final_response = client.models.generate_content(
                     model=model,
@@ -186,6 +189,7 @@ def generate_content(model="gemini-2.5-flash", prompt_parts=None, language="Engl
             "Pidgin": "Ah-ahn! E be like say I no fit answer dat one. Abeg, try ask am anoda way? 🥺",
         }
         return fallback_messages.get(language, "🤖 FoodieBot couldn’t generate a reply. Try rephrasing your input.")
+
 
 
 def tool_response_format(tool_called="Unknown function"):
@@ -228,17 +232,70 @@ def tool_response_format(tool_called="Unknown function"):
     elif tool_called == "book_table_api": 
         context += """Assist the user with table inquiries, listing the tables, checking availability and their price.
                  1. **Generate an invoice of the booking, ask the user if you should go ahead with the booking process**
-                 2. If the user gives you the go ahead to book the table at their selected branch, then Generate a final receipt of the booking and handle the billing
+                 2. If the user gives you the go ahead to book the table at their selected branch, then **Generate a final receipt of the booking and handle the billing
                  """
         
     elif tool_called == "location":
         context += "Based on the user's provided (or inferred) location, estimate the distance to their nearest Foodie branch and the estimated delivery time. Provide this information in a friendly, conversational tone, directly addressing their location-based query. Make sure your response is helpful and clear."
 
+    elif tool_called == "pre_order_api":
+        context += """You are assisting the user with making a food order. Respond in the selected language and follow these instructions:
+            1. Always respond with a neat **updated provisional invoice** showing **all requested Item** names, Quantities, Unit prices, Subtotals, VAT (if applicable), Grand total
+            3. After presenting the invoice, creativitively engage the user by asking a "to do" question. For example: “Would you like to go ahead with this order
+            or would you like to make changes to the oreder?” If the user confirms, the order will be placed in the next step.
+            Do not bold or format the invoice with asterisks.
+
+        Use this exact format for the invoice:
+
+        **Example For one item:**
+
+        Provisional Order Summary:
+        ---------------------------
+        Item: Zobo
+        Quantity: 4
+        Price per item: ₦500.00
+        Total for Zobo: ₦2,000.00
+
+        Sub-total: ₦2,000.00
+        VAT (7.5%): ₦150.00
+        ---------------------------
+        Grand Total: ₦2,150.00
+
+        **Example For more than one item:**
+
+        Provisional Order Summary:
+        ---------------------------
+        - Zobo x4:      ₦2,000.00
+        - Moi moi x1:   ₦2,000.00
+        Sub-total:      ₦2,000.00
+        Takeaway:       ₦200.00
+        VAT (7.5%):     ₦150.00
+        ---------------------------
+        Grand Total:    ₦2,150.00
+
+        **Use the correct name of the items from the menu and Only add Take away packaging to the invoice if the person is ordering anything outside drinks**
+        """
+
     elif tool_called == "place_order_api":
         context += """Upon the user's explicit confirmation to finalize and submit their order (after they have finished selecting all items and details):
         If their location is not already known, politely ask for it.
-        Then, proceed to submit the complete order for placement. Upon successful order submission and deduction from their wallet, provide a clear, friendly, and reassuring order confirmation to the user. 
-        **Do not dedcut money from wallet before user's explicit consent. After confirmation generate final invoice details (items ordered, total cost) and deduct the money from wallet**, and the estimated delivery time to their location. Generate the response in a natural chat style in their selected language. Avoid unnecessary empty lines. """
+        Then, proceed to submit the complete order for placement. Upon successful order submission and deduction from their wallet, provide a clear, friendly, and reassuring order confirmation to the user **with receipt**. 
+        **Do not dedcut money from wallet before user's explicit consent. After confirmation generate final invoice details (items ordered, total cost) and deduct the money from wallet**, and the estimated delivery time to their location. Generate the response in a natural chat style in their selected language. Avoid unnecessary empty lines. 
+        
+        **Example of Receipt**
+        Receipt:
+        ---------------------------
+        - Zobo x4:      ₦2,000.00
+        - Moi moi x1:   ₦2,000.00
+        Sub-total:      ₦2,000.00
+        Takeaway:       ₦200.00
+        VAT (7.5%):     ₦150.00
+        ---------------------------
+        Grand Total:    ₦2,150.00
+
+        Time-stamp: 13/07/2025 6:00pm
+        Status: Paid
+        """
 
     else:
         context = "No specific context. Represent the Foodie Brand well and jovially. Apologize if relevant to the conversation."
