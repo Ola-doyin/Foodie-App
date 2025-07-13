@@ -1,0 +1,56 @@
+{
+    "customer_id": 3,
+    "wallet_balance": 13904.0,
+    "last_orders": [
+        {
+            "food": [
+                "Spaghetti Jollof",
+                "Egg Sauce"
+            ],
+            "date": "2025-07-10",
+            "time": "19:10"
+        },
+        {
+            "food": [
+                "Yam Porridge",
+                "Fried Plantain"
+            ],
+            "date": "2025-07-09",
+            "time": "19:10"
+        },
+        {
+            "food": [
+                "Ewa Agoyin",
+                "Chicken (Small)",
+                "Zobo Drink"
+            ],
+            "date": "2025-07-06",
+            "time": "09:50"
+        },
+        {
+            "food": [
+                "Semovita",
+                "Ogbono",
+                "Ponmo"
+            ],
+            "date": "2025-07-05",
+            "time": "14:30"
+        },
+        {
+            "food": [
+                "Fruit Salad",
+                "Puff Puff"
+            ],
+            "date": "2025-07-04",
+            "time": "10:20"
+        },
+        {
+            "food": [
+                "Boiled Yam",
+                "Catfish Pepper Soup"
+            ],
+            "date": "2025-07-03",
+            "time": "18:30"
+        }
+    ]
+}

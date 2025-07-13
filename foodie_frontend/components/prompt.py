@@ -131,63 +131,61 @@ def generate_content(model="gemini-2.5-flash", prompt_parts=None, language="Engl
                 maxOutputTokens=512
             )
         )
-        #print(f"Response: {response}")
 
+        # Check if a function was called
         if response.candidates[0].content.parts[0].function_call:
             func_name = response.candidates[0].content.parts[0].function_call.name
             func_args = response.candidates[0].content.parts[0].function_call.args
+            print(func_name)
 
-            api_result = call_fastapi_endpoint(func_name, **func_args)
-            
-            #print(api_result)
+            # Handle server failure during API call
+            try:
+                api_result = call_fastapi_endpoint(func_name, **func_args)
+            except requests.exceptions.RequestException as e:
+                print(f"FastAPI Error: {e}")
+                return "🖥️ Server is temporarily down. 🔧 We'll be back online shortly ✨"
 
             # Optional: get function description for logging
             description = next(
                 (tool.description for tool in restaurant_tools if tool.name == func_name),
                 "Function role not found"
             )
-            #print(f"Function Role: {description}")
-            #print(api_result)
-            # Regenerate response with function output as context
-            try: 
-                new_prompt = "User: " + original_text
-                new_prompt += "\nData: " + json.dumps(api_result, indent=2)
-                new_prompt += f"\nChatting in {language}, {tool_response_format(func_name)}"
-            except requests.exceptions.RequestException as e:
-                return "Server down "
-            
-            #print(new_prompt)
-            final_response = client.models.generate_content(
-                model=model,
-                contents=new_prompt,
-                config=types.GenerateContentConfig(
-                    system_instruction="With the knowledge of this data provided, respond to the user",
-                    temperature=0.7,
-                    topP=1,
-                    topK=1,
-                    maxOutputTokens=2500
-                )
-            )
-            #print(final_response)
-            return final_response.text.strip().replace("\n", "<br>")
 
-        # No function call? Return original reply
+            # Regenerate response with API data
+            new_prompt = "User: " + original_text
+            new_prompt += "\nData: " + json.dumps(api_result, indent=2)
+            new_prompt += f"\nChatting in {language}, {tool_response_format(func_name)}"
+            
+            try:
+                final_response = client.models.generate_content(
+                    model=model,
+                    contents=new_prompt,
+                    config=types.GenerateContentConfig(
+                        system_instruction="With the knowledge of this data provided, respond to the user",
+                        temperature=0.7,
+                        topP=1,
+                        topK=1,
+                        maxOutputTokens=2500
+                    )
+                )
+                return final_response.text.strip().replace("\n", "<br>")
+            except requests.exceptions.RequestException as e:
+                print(f"Final response error: {e}")
+                return "🖥️⚙️ Server is temporarily down. We'll be back online shortly ✨"
+
+        # If no function call is present, return the direct response
         return response.text.strip().replace("\n", "<br>")
 
     except Exception as e:
         print("Error:", str(e))
-        if language == "English":
-            return "Oops! 🤖 Looks like I couldn't quite cook up a response for that. Could you try rephrasing your question, please? 😊"
-        elif language == "Yoruba":
-            return "Ah, oya! 🤖 Ó dàbí pé mi ò lè dáhùn ìyẹn. Jọ̀wọ́, ẹ tún ìbéèrè yín ṣe? Mo ti ṣetán láti ran yín lọ́wọ́! 😊"
-        elif language == "Igbo":
-            return "Chai! 🤖 O dị ka enweghị m ike ịza ajụjụ ahụ. Biko, gbanwee ụzọ ị jụrụ ya? Adị m njikere inyere gị aka! 😊"
-        elif language == "Hausa":
-            return "Kash! 🤖 Da alama ban samu damar ba da amsa ba. Don Allah, sake faɗin tambayar taka? Ina shirye don taimaka maka! 😊"
-        elif language == "Pidgin":
-            return "Ah-ahn! 🤖 E be like say I no fit answer dat one. Abeg, try ask am anoda way? I ready to help you! 😊"
-        else:
-            return "🤖 FoodieBot couldn’t generate a reply. Try rephrasing your input."
+        fallback_messages = {
+            "English": "Oops! Looks like I couldn't quite cook up a response for that. Could you try rephrasing your question, please? 🥺",
+            "Yoruba": "Ah, oya! Ó dàbí pé mi ò lè dáhùn ìyẹn. Jọ̀wọ́, ẹ tún ìbéèrè yín ṣe? 🥺",
+            "Igbo": "Chai! O dị ka enweghị m ike ịza ajụjụ ahụ. Biko, gbanwee ụzọ ị jụrụ ya? 🥺",
+            "Hausa": "Kash! Da alama ban samu damar ba da amsa ba. Don Allah, sake faɗin tambayar taka? 🥺",
+            "Pidgin": "Ah-ahn! E be like say I no fit answer dat one. Abeg, try ask am anoda way? 🥺",
+        }
+        return fallback_messages.get(language, "🤖 FoodieBot couldn’t generate a reply. Try rephrasing your input.")
 
 
 def tool_response_format(tool_called="Unknown function"):
@@ -222,11 +220,17 @@ def tool_response_format(tool_called="Unknown function"):
         context += """Start by identifying and providing Foodie branches relevant to the user's request. If the user's location is known or inferable from their prompt, provide the nearest branch. Otherwise, list all available branches. After providing the branch information, warmly engage the user by asking for their current location (if not already known) and if they'd like to place an order or make a table reservation. Ensure the entire reply maintains a seamless, friendly, and helpful conversational flow. **Chat in the selected language, don't use empty lines where unnecessary and creactively generate the concise response in a natural chat style.**"""
 
     elif tool_called == "get_branch_details_api":
-        context += "**Creatively response specifically with relevant details about the requested Foodie branch (location, managers, available tables, specials, hours) based on the user's prompt in selected language**. Answer in a friendly, conversational context. **Don't use empty lines where unnessary and don't bolden anything, just * * instead**"
+        context += """Creatively answer the user's prompt about the requested Foodie branch.
+            - If the user asks for **specific details** (e.g., "tables", "hours", "managers", "contact"), provide **only** those requested details, **if the response should be a list, list it instead, also return hours in am and pm**.
+            - If the user asks **generally** about the branch (e.g., "Tell me about Ikeja branch"), creatively provide all relevant details (location, managers, available tables, specials, hours).
+            Ensure the response is friendly, conversational, and in the user's selected language. Do not use unnecessary empty lines or bold text in your final response."""
 
-    elif tool_called == "book_table_api":
-        context += "Assist the user with table inquiries, **listing the yables, checking availability and their price**. Then, take their booking for a table at their preferred available branch. **Generate an invoice at the booking and handle the billing**"
-
+    elif tool_called == "book_table_api": 
+        context += """Assist the user with table inquiries, listing the tables, checking availability and their price.
+                 1. **Generate an invoice of the booking, ask the user if you should go ahead with the booking process**
+                 2. If the user gives you the go ahead to book the table at their selected branch, then Generate a final receipt of the booking and handle the billing
+                 """
+        
     elif tool_called == "location":
         context += "Based on the user's provided (or inferred) location, estimate the distance to their nearest Foodie branch and the estimated delivery time. Provide this information in a friendly, conversational tone, directly addressing their location-based query. Make sure your response is helpful and clear."
 

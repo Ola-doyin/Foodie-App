@@ -52,10 +52,10 @@ def page_header_css(title_text):
     <style>
     .custom-page-title {{
         position: fixed;
-        top: 5%;
+        top: 2%;
         left: 35%;        
         width: 65%;
-        font-size: 48px;
+        font-size: 44px;
         color: #ffffff;
         font-weight: bold;
         z-index: 9999;
@@ -74,7 +74,7 @@ def page_subheader_css(title_text):
     <style>
     .custom-subheader {{
         position: fixed;
-        top: 12%;
+        top: 10%;
         left: 35%;
         width: 65%;
         font-size: 20px;
