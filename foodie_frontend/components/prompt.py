@@ -225,7 +225,7 @@ def tool_response_format(tool_called="Unknown function"):
         context += """Start by identifying and providing Foodie branches relevant to the user's request. If the user's location is known or inferable from their prompt, provide the nearest branch. Otherwise, list all available branches. After providing the branch information, warmly engage the user by asking for their current location (if not already known) and if they'd like to place an order or make a table reservation. Ensure the entire reply maintains a seamless, friendly, and helpful conversational flow. **Chat in the selected language, don't use empty lines where unnecessary and creactively generate the concise response in a natural chat style.**"""
 
     elif tool_called == "get_branch_details_api":
-        context += """Creatively answer the user's prompt about the requested Foodie branch.
+        context += """Return creatively generated answers the user's prompt about the requested Foodie branch.
             - If the user asks for **specific details** (e.g., "tables", "hours", "managers", "contact"), provide **only** those requested details, **if the response should be a list, list it instead, also return hours in am and pm**.
             - If the user asks **generally** about the branch (e.g., "Tell me about Ikeja branch"), creatively provide all relevant details (location, managers, available tables, specials, hours).
             Ensure the response is friendly, conversational, and in the user's selected language. Do not use unnecessary empty lines or bold text in your final response."""
