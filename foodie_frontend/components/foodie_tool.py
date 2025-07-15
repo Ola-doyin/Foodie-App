@@ -64,7 +64,9 @@ restaurant_tools = [
     ),
     FunctionDeclaration(
         name="get_full_menu_api",
-        description="Get the full categorized menu and prices in naira **DO NOT HANDLE MENU BY GIVEN CATEGORY OR ORDER PROMPTS**.",
+        description= ("**Retrieves the entire, categorized menu with all available food items and their prices in Naira.** "
+        "Use this tool ONLY when the user explicitly asks to see the complete menu or wants to browse food options."
+        "**Do NOT use this tool for requests for specific menu categories (e.g., 'show me soups') or any intent to place or summarize an order (e.g., I want to order/buy ...)**"),
         parameters={},
     ),
     FunctionDeclaration(
@@ -144,7 +146,8 @@ restaurant_tools = [
     ),
     FunctionDeclaration(
         name="pre_order_api",
-        description="Give a provisional and updatable **invoice for all the requested food items and updated invoices with quantities and prices**. This does NOT place the order or deduct money.",
+        description=("Give a provisional and updatable **invoice for all the requested food items and updated invoices with quantities and prices**. This does NOT place the order or deduct money."
+                    "**Use this when the user is building an order, asking for a summary of the selected food items, or confirming prices before final checkout.**"),
         parameters={},
     ),
     #FunctionDeclaration(
