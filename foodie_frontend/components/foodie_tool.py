@@ -146,8 +146,9 @@ restaurant_tools = [
     ),
     FunctionDeclaration(
         name="pre_order_api",
-        description=("Give a provisional and updatable **invoice for all the requested food items and updated invoices with quantities and prices**. This does NOT place the order or deduct money."
-                    "**Use this when the user is building an order, asking for a summary of the selected food items, or confirming prices before final checkout.**"),
+        description=("""Give a provisional and updatable **invoice for all the requested food items and updated invoices with quantities and prices**. This does NOT place the order or deduct money."
+                     **Crucially, use this tool for any user intent related to building a food order (e.g. 'I want to buy/order/place order for/get', etc) , adding or removing items, 
+                     asking for a summary of their selected food items, or confirming prices before they are ready to finalize payment.**"""),
         parameters={},
     ),
     #FunctionDeclaration(
